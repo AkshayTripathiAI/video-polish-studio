@@ -1,0 +1,16 @@
+# rendered outputs (large; keep outside the repo)
+*.mp4
+*.mov
+*.mkv
+*.wav
+*.mp3
+!assets/*.mp4
+
+# environments and secrets
+.venv/
+at_env/
+.env
+
+# OS / tooling
+.DS_Store
+__pycache__/
