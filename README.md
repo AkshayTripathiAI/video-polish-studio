@@ -8,13 +8,22 @@ Two standalone ffmpeg-based scripts:
 | `dynamic_visuals.py` | Rebuilds only the picture: scene detection, per-slide zoom/pan, short transitions, colour grade, logo cover + channel logo. Audio stays untouched and in sync. |
 | `enhance_video.py` | Production layer: faster-whisper transcript, optional re-voice with an ElevenLabs voice clone (time-fitted to the original timeline), burned-in captions, zoom, music bed, 9:16 Shorts reframe, intro/outro, transcript JSON for SEO. |
 
+## Requirements
+
+- Python 3 with the packages in `requirements.txt` (`faster-whisper`, `pydub`, `requests`)
+- `ffmpeg` and `ffprobe` on your `PATH` (both scripts call them directly); burned-in captions need an ffmpeg build with libass
+- `ELEVENLABS_API_KEY` environment variable, only for `enhance_video.py --revoice` (together with `--voice-id`). No other API keys are used.
+- faster-whisper downloads the selected Whisper model (`--whisper-model`, default `small`) on first run
+
+`dynamic_visuals.py` needs only ffmpeg; it has no Python package dependencies.
+
 ## Setup
 
 ```bash
 # system dependency
 sudo apt-get install ffmpeg        # macOS: brew install ffmpeg · Windows: winget install ffmpeg
 
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -37,12 +46,17 @@ python enhance_video.py input.mp4 -o short.mp4 --vertical --intro assets/c_intro
 
 Run either script with `-h` for all options.
 
-## Layout
+## Project structure
 
 ```
-assets/     channel banner, logo, intro clip
-examples/   transcript/metadata JSON from a real run (Hindi, "Abhimanyu" episode)
+dynamic_visuals.py   scene detection, per-slide motion, transitions, grade, logo cover/overlay
+enhance_video.py     transcribe, re-voice, captions, zoom, music, 9:16 reframe, intro/outro
+requirements.txt     Python dependencies for enhance_video.py
+assets/              channel banner, logo, intro clip
+examples/            transcript/metadata JSON from a real run (Hindi, "Abhimanyu" episode)
 ```
+
+`enhance_video.py` also writes `<output>.meta.json` next to the rendered video (source, duration, full transcript and timed segments), the same format as the files in `examples/`.
 
 Rendered videos are git-ignored. Keep outputs outside the repo or in cloud storage.
 
